@@ -1,0 +1,8 @@
+# docker container export container_id -o httpd.zip
+# docker image import htttpd.zip httpd
+# docker container commit --auther="aman" -m "1st commit" container_id myimage
+-------------------------------------------------------------------------------
+# docker container cp -rf * container_id:/
+-------------------------------------------------------------------------------
+
+
