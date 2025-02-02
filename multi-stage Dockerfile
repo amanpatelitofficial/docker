@@ -1,0 +1,34 @@
+# ---- Build Stage ----
+FROM node:20-alpine AS build
+
+# Set working directory
+WORKDIR /app
+
+# Copy package.json and package-lock.json first (for caching dependencies)
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install --only=production
+
+# Copy the rest of the application code
+COPY . .
+
+# Build the application (if needed)
+RUN npm run build  # Uncomment if your app requires a build step
+
+# ---- Production Stage ----
+FROM node:20-alpine AS production
+
+# Set working directory
+WORKDIR /app
+
+# Copy only necessary files from the build stage
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/dist ./dist  # Adjust if your app has a build folder
+COPY --from=build /app/package.json ./package.json
+
+# Expose the port the app runs on
+EXPOSE 3000
+
+# Define the startup command
+CMD ["node", "server.js"]  # Change to your actual entry file (e.g., app.js)
